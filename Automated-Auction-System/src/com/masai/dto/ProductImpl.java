@@ -24,7 +24,7 @@ public class ProductImpl implements Product{
 		this.quantity = quantity;
 		this.categoryId = categoryId;
 		this.mfgDate = mfgDate;
-		GST = gST;
+		this.GST = gST;
 		this.sold_status = sold_status;
 	}
 

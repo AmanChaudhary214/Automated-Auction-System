@@ -37,42 +37,11 @@ public class ProductUI {
 	}
 	
 
-	public void updateProduct() throws NoRecordFoundException, SomethingWentWrongException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		System.out.print("Enter product name ");
-		String productName = scanner.next();
-		
-		System.out.print("Enter product desc ");
-		String productDesc = scanner.next();
-		
-		System.out.print("Enter price ");
-		int price = scanner.nextInt();
-		
-		System.out.print("Enter quantity ");
-		int quantity = scanner.nextInt();
-		
-		System.out.print("Enter categoryId ");
-		String categoryId = scanner.next();
-		
-		System.out.print("Enter MFG. Date ");
-		LocalDate mfgDate = LocalDate.parse(scanner.next());
-		
-		System.out.print("Enter GST ");
-		Double gst = scanner.nextDouble();
-		
-		System.out.print("Enter sold status ");
-		String sold_status = scanner.next();
-		
-		//create object for product with all details
-		Product product= new ProductImpl(productName, productDesc, price, quantity, categoryId, mfgDate, gst, sold_status);
-		
-		productDAO.updateProduct(product);
-		System.out.println("Product updated successfully");
-	}
-	
-
 	public void addProduct() throws SomethingWentWrongException, ClassNotFoundException {
 		// TODO Auto-generated method stub
+		System.out.print("Enter productId: ");
+		String productId = scanner.next();
+		
 		System.out.print("Enter product name: ");
 		String productName = scanner.next();
 		
@@ -98,23 +67,61 @@ public class ProductUI {
 		String sold_status = scanner.next();
 		
 		//create object for product with all details
-		Product product= new ProductImpl(productName, productDesc, price, quantity, categoryId, mfgDate, gst, sold_status);
+		Product product= new ProductImpl(productId, productName, productDesc, price, quantity, categoryId, mfgDate, gst, sold_status);
 		
 		productDAO.addProduct(product);;
 		System.out.println("Product added successfully");
 	}
 	
+	
+	public void updateProduct() throws NoRecordFoundException, SomethingWentWrongException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.print("Enter productId: ");
+		String productId = scanner.next();
+		
+		System.out.print("Enter product name ");
+		String productName = scanner.next();
+		
+		System.out.print("Enter product desc ");
+		String productDesc = scanner.next();
+		
+		System.out.print("Enter price ");
+		int price = scanner.nextInt();
+		
+		System.out.print("Enter quantity ");
+		int quantity = scanner.nextInt();
+		
+		System.out.print("Enter categoryId ");
+		String categoryId = scanner.next();
+		
+		System.out.print("Enter MFG. Date ");
+		LocalDate mfgDate = LocalDate.parse(scanner.next());
+		
+		System.out.print("Enter GST ");
+		Double gst = scanner.nextDouble();
+		
+		System.out.print("Enter sold status ");
+		String sold_status = scanner.next();
+		
+		//create object for product with all details
+		Product product= new ProductImpl(productId, productName, productDesc, price, quantity, categoryId, mfgDate, gst, sold_status);
+		
+		productDAO.updateProduct(product);
+		System.out.println("Product updated successfully");
+	}
 
+	
+	public void viewSoldProducts() throws NoRecordFoundException, SomethingWentWrongException {
+		// TODO Auto-generated method stub
+		List<Product> listProducts = productDAO.getSoldProducts();
+		listProducts.forEach(System.out::println);
+	}
+
+	
 	public void purchaseProducts() {
 		// TODO Auto-generated method stub
 		
 	}	
-
-
-	public void viewSoldProducts() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 
 	public void viewOrders() {

@@ -9,132 +9,113 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.dto.Product;
-import com.masai.dto.CategoryImpl;
 import com.masai.dto.ProductImpl;
 import com.masai.exception.NoRecordFoundException;
 import com.masai.exception.SomethingWentWrongException;
 
 public class ProductDAOImpl implements ProductDAO{
 	
-	private List<Product> getProductListFromResultSet(ResultSet resultSet) throws SQLException{
+	
+	public List<Product> getAllProducts() throws SomethingWentWrongException, NoRecordFoundException {
+		Connection conn = null;
 		List<Product> list = new ArrayList<>();
-		while(resultSet.next()) {
-			Product product = new ProductImpl();
-			product.setPrductId(resultSet.getString("prductId"));
-			product.setProductName(resultSet.getString("productName"));
-			product.setProductDesc(resultSet.getString("productDesc"));
-			product.setPrice(resultSet.getInt("price"));
-			product.setQuantity(resultSet.getInt("quantity"));
-			product.setCategoryId(resultSet.getString("categoryId"));
-			product.setMfgDate(resultSet.getDate("mfgDate").toLocalDate());
-			product.setGST(resultSet.getDouble("GST"));
-			product.setSold_status(resultSet.getString("sold_status"));
-			
-			if(resultSet.getInt("cat_id") == 0) {
-				//you are here means the product does not belong to any category
-				product.setCategory(null);
-			}else {
-				//you are here means the product belongs to a category
-				product.setCategory(new CategoryImpl(resultSet.getInt("cat_id"), resultSet.getString("cat_name")));
-			}
-
-			list.add(product);
-		}
-		return list;
-	}
-
-	@Override
-	public List<Product> getAllProducts() throws SomethingWentWrongException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		Connection connection = null;
-		List<Product> list = null;
 		try {
-			//connect to database
-			connection = DBUtility.getConnectiontoDatabase();
-			//prepare the query
-			String SELECT_QUERY = "SELECT prductId, productName, productDesc, price, quantity, categoryId, mfgDate, GST, sold_status FROM product";
-			
-			//get the prepared statement object
-			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
-			
-			//execute query
-			ResultSet resultSet = ps.executeQuery();
-			
-			//check if result set is empty
-			if(DBUtility.isResultSetEmpty(resultSet)) {
-				throw new NoRecordFoundException("No product Found");
+			conn = DBUtility.getConnectiontoDatabase();
+			String query = "SELECT prductId, productName, productDesc, price, quantity, categoryId, mfgDate, GST, sold_status FROM product";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			if(DBUtility.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("No product found");
+			}
+			while(rs.next()) {
+				list.add(new ProductImpl(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getString(6), rs.getDate(7).toLocalDate(), rs.getDouble(8), rs.getString(9)));
 			}
 			
-			list = getProductListFromResultSet(resultSet);
-		}catch(SQLException sqlEx) {
-			//code to log the error in the file
-			throw new SomethingWentWrongException("No product Found");
-		} catch (NoRecordFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}catch(ClassNotFoundException | SQLException ex) {
+			throw new SomethingWentWrongException("Unable to update the record now, try again later");
 		}finally {
 			try {
-				//close the exception
-				DBUtility.closeConnection(connection);				
-			}catch(SQLException sqlEX) {
-				throw new SomethingWentWrongException("No product Found");
+				DBUtility.closeConnection(conn);					
+			}catch(SQLException ex) {
+				
 			}
 		}
 		return list;
 	}
+	
 
-	@Override
-	public List<Product> getProductsByCategoryId(String categoryId) throws NoRecordFoundException, ClassNotFoundException, SomethingWentWrongException {
-		// TODO Auto-generated method stub
-		Connection connection = null;
-		List<Product> list = null;
+	@Override	
+	public List<Product> getProductsByCategoryId(String categoryId) throws SomethingWentWrongException, NoRecordFoundException {
+		Connection conn = null;
+		List<Product> list = new ArrayList<>();
 		try {
-			//connect to database
-			connection = DBUtility.getConnectiontoDatabase();
-			//prepare the query
-			String SELECT_QUERY = "SELECT * FROM product WHERE categoryId = ?";
+			conn = DBUtility.getConnectiontoDatabase();
+			String query = "SELECT * FROM product WHERE categoryId = ?";
+			PreparedStatement ps = conn.prepareStatement(query);
 			
-			//get the prepared statement object
-			PreparedStatement ps = connection.prepareStatement(SELECT_QUERY);
 			ps.setString(1, categoryId);
 			
-			//execute query
-			ResultSet resultSet = ps.executeQuery();
-			
-			//check if result set is empty
-			if(DBUtility.isResultSetEmpty(resultSet)) {
-				throw new NoRecordFoundException("No product Found in this category");
+			ResultSet rs = ps.executeQuery();
+			if(DBUtility.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("No product found");
 			}
+			while(rs.next()) {
+				list.add(new ProductImpl(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getString(6), rs.getDate(7).toLocalDate(), rs.getDouble(8), rs.getString(9)));
+				}
 			
-			list = getProductListFromResultSet(resultSet);
-		}catch(SQLException sqlEx) {
-			//code to log the error in the file
-			throw new SomethingWentWrongException("No product Found in this category");
+		}catch(ClassNotFoundException | SQLException ex) {
+			throw new SomethingWentWrongException("Unable to update the record now, try again later");
 		}finally {
 			try {
-				//close the exception
-				DBUtility.closeConnection(connection);				
-			}catch(SQLException sqlEX) {
-				throw new SomethingWentWrongException("No product Found in this category");
+				DBUtility.closeConnection(conn);					
+			}catch(SQLException ex) {
+				
 			}
 		}
 		return list;
 	}
-
+	
+	
 	@Override
-	public void updateProduct(Product product) throws ClassNotFoundException, SomethingWentWrongException {
-		// TODO Auto-generated method stub
-		Connection connection = null;
+	public void addProduct(Product product) throws SomethingWentWrongException {
+		Connection conn = null;
 		try {
-			//connect to database
-			connection = DBUtility.getConnectiontoDatabase();
-			//prepare the query
-			String UPDATE_QUERY = "UPDATE product SET productName=?, productDesc=?, price=?, quantity=?, categoryId=?, mfgDate=?, GST=?, sold_status=? FROM product WHERE prductId = ?";
+			conn = DBUtility.getConnectiontoDatabase();
+			String query = "INSERT INTO product (prductId, productName, productDesc, price, quantity, categoryId, mfgDate, GST, sold_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
-			//get the prepared statement object
-			PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
+			PreparedStatement ps = conn.prepareStatement(query);
 			
-			//stuff the data in the query
+			ps.setString(1, product.getPrductId());
+			ps.setString(2, product.getProductName());
+			ps.setString(3, product.getProductDesc());
+			ps.setInt(4, product.getPrice());
+			ps.setInt(5, product.getQuantity());
+			ps.setString(6, product.getCategoryId());
+			ps.setDate(7, Date.valueOf(product.getMfgDate()));
+			ps.setDouble(8, product.getGST());
+			ps.setString(9, product.getSold_status());
+			
+			ps.executeUpdate();
+		}catch(ClassNotFoundException | SQLException ex) {
+			throw new SomethingWentWrongException("Unable to insert the record now, try again later");
+		}finally {
+			try {
+				DBUtility.closeConnection(conn);					
+			}catch(SQLException ex) {
+				
+			}
+		}
+	}
+	
+
+	@Override	
+	public void updateProduct(Product product) throws SomethingWentWrongException {
+		Connection conn = null;
+		try {
+			conn = DBUtility.getConnectiontoDatabase();
+			String query = "UPDATE product SET productName=?, productDesc=?, price=?, quantity=?, categoryId=?, mfgDate=?, GST=?, sold_status=? WHERE prductId = ?";
+			PreparedStatement ps = conn.prepareStatement(query);
+			
 			ps.setString(1, product.getProductName());
 			ps.setString(2, product.getProductDesc());
 			ps.setInt(3, product.getPrice());
@@ -145,57 +126,49 @@ public class ProductDAOImpl implements ProductDAO{
 			ps.setString(8, product.getSold_status());
 			ps.setString(9, product.getPrductId());
 			
-			//execute query
 			ps.executeUpdate();
-		}catch(SQLException sqlEx) {
-			//code to log the error in the file
-			throw new SomethingWentWrongException("Unable to update");
+		}catch(ClassNotFoundException | SQLException ex) {
+			throw new SomethingWentWrongException("Unable to insert the record now, try again later");
 		}finally {
 			try {
-				//close the exception
-				DBUtility.closeConnection(connection);				
-			}catch(SQLException sqlEX) {
-				throw new SomethingWentWrongException("Unable to update");
+				DBUtility.closeConnection(conn);					
+			}catch(SQLException ex) {
+				
 			}
 		}
 	}
 
+
 	@Override
-	public void addProduct(Product product) throws ClassNotFoundException, SomethingWentWrongException {
+	public List<Product> getSoldProducts() throws NoRecordFoundException, SomethingWentWrongException {
 		// TODO Auto-generated method stub
-		Connection connection = null;
+		Connection conn = null;
+		List<Product> list = new ArrayList<>();
 		try {
-			//connect to database
-			connection = DBUtility.getConnectiontoDatabase();
-			//prepare the query
-			String INSERT_QUERY = "INSERT INTO product (productName, productDesc, price, quantity, categoryId, mfgDate, GST, sold_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			conn = DBUtility.getConnectiontoDatabase();
+			String query = "SELECT * FROM product WHERE sold_Status = ?";
+			PreparedStatement ps = conn.prepareStatement(query);
 			
-			//get the prepared statement object
-			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			ps.setString(1, "sold");
 			
-			//stuff the data in the query
-			ps.setString(1, product.getProductName());
-			ps.setString(2, product.getProductDesc());
-			ps.setInt(3, product.getPrice());
-			ps.setInt(4, product.getQuantity());
-			ps.setString(5, product.getCategoryId());
-			ps.setDate(6, Date.valueOf(product.getMfgDate()));
-			ps.setDouble(7, product.getGST());
-			ps.setString(8, product.getSold_status());
+			ResultSet rs = ps.executeQuery();
+			if(DBUtility.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("No product found");
+			}
+			while(rs.next()) {
+				list.add(new ProductImpl(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getString(6), rs.getDate(7).toLocalDate(), rs.getDouble(8), rs.getString(9)));
+				}
 			
-			//execute query
-			ps.executeUpdate();
-		}catch(SQLException sqlEx) {
-			//code to log the error in the file
-			throw new SomethingWentWrongException("Unable to add product");
+		}catch(ClassNotFoundException | SQLException ex) {
+			throw new SomethingWentWrongException("Unable to update the record now, try again later");
 		}finally {
 			try {
-				//close the exception
-				DBUtility.closeConnection(connection);				
-			}catch(SQLException sqlEX) {
-				throw new SomethingWentWrongException("Unable to add product");
+				DBUtility.closeConnection(conn);					
+			}catch(SQLException ex) {
+				
 			}
-		}	
+		}
+		return list;
 	}
 
 }
