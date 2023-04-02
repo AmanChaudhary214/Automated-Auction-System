@@ -8,12 +8,14 @@ import com.masai.exception.SomethingWentWrongException;
 
 public interface ProductDAO {
 
-	List<Product> getAllProducts() throws SomethingWentWrongException, ClassNotFoundException;
+	List<Product> getAllProducts() throws SomethingWentWrongException, ClassNotFoundException, NoRecordFoundException;
 
 	List<Product> getProductsByCategoryId(String categoryId) throws NoRecordFoundException, ClassNotFoundException, SomethingWentWrongException;
 
 	void updateProduct(Product product) throws ClassNotFoundException, SomethingWentWrongException;
 
 	void addProduct(Product product) throws ClassNotFoundException, SomethingWentWrongException;
+
+	List<Product> getSoldProducts() throws NoRecordFoundException, SomethingWentWrongException;
 
 }

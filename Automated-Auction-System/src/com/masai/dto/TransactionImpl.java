@@ -22,6 +22,10 @@ public class TransactionImpl implements Transaction{
 		this.transactionDate = transactionDate;
 	}
 
+	public TransactionImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getTransactionId() {
 		return transactionId;
 	}
