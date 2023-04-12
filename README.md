@@ -16,6 +16,9 @@ Following are the lists of various users of the system and also the role of the 
 1. Administrator
 2. User (can buy and sell)
 
+## ER Diagram
+<img align="center" alt="Demo" src="https://github.com/AmanChaudhary214/scrawny-liquid-7267/blob/main/ER%20Diagram.drawio.png" />
+
 
 ## Admin Features 📋
 
