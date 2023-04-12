@@ -1,4 +1,4 @@
- <h1 align="center">AuctoNet Auction System</h1> 
+ <h1 align="center">Automated Auction System</h1> 
  
 <h2 align="center">🌟An open platform to buy or sell things.🌟</h2>
 
