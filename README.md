@@ -5,8 +5,10 @@
 
 <br>
 <br>
-An automated Auction System is an Application Software that is used for the buying and selling of products. This software can be used by the auction companies who arrange the Auction. Various buyers and sellers are registered in the Auction company.
+<p align="center">An automated Auction System is an Application Software that is used for the buying and selling of products. This software can be used by the auction companies who arrange the Auction. Various buyers and sellers are registered in the Auction company.</p>
 
+<br>
+<br>
 
 Following are the lists of various users of the system and also the role of the users
 
@@ -14,8 +16,6 @@ Following are the lists of various users of the system and also the role of the 
 1. Administrator
 2. User (can buy and sell)
 
-## ER Diagram
-<img alt="Demo" src="https://drive.google.com/file/d/1bBRG6TWMcm8XDJeYfpC1z6rJdMxJYQo2/view?usp=sharing" />
 
 ## Admin Features 📋
 
